@@ -120,7 +120,7 @@ export function TopMusicalPageClient() {
         <img
           src="/images/top.jpeg"
           alt="Top 10 Musical"
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="absolute inset-0 h-full w-full object-cover object-top"
         />
         {/* Overlay oscuro para legibilidad */}
         <div className="absolute inset-0 bg-black/55" />
