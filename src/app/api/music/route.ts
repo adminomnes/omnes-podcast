@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import { fetchPlaylistTracks, parseTrackToTrackData } from "@/lib/music/spotify"
+import { fetchPlaylistTracks, parseTrackToTrackData, type ParsedTrack } from "@/lib/music/spotify"
 import { CHARTS } from "@/lib/music/config"
+import { getMockTracks } from "@/lib/music/mockData"
 import { readFromR2, uploadToR2 } from "@/lib/cloudflare"
 import type { TrackData, Variation, ChartData, ChartHistory } from "@/lib/music/types"
 import type { ChartKey } from "@/lib/music/types"
@@ -47,7 +48,17 @@ export async function GET(request: NextRequest) {
 
   for (const chart of targets) {
     try {
-      const parsed = await fetchPlaylistTracks(chart.playlistId)
+      let parsed: ParsedTrack[] = []
+      try {
+        parsed = await fetchPlaylistTracks(chart.playlistId)
+      } catch (err) {
+        console.error(`Failed to fetch Spotify tracks for chart ${chart.key}:`, err)
+      }
+
+      if (!parsed || parsed.length === 0) {
+        parsed = getMockTracks(chart.key)
+      }
+
       const previousRankings = history[chart.key]?.rankings || []
 
       const tracks: TrackData[] = parsed.slice(0, 10).map((track, i) => {
@@ -73,8 +84,8 @@ export async function GET(request: NextRequest) {
         updatedAt: new Date().toISOString(),
         source: "Spotify",
       })
-    } catch {
-      /* skip failed charts */
+    } catch (err) {
+      console.error(`Error processing chart ${chart.key}:`, err)
     }
   }
 

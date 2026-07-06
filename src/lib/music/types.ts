@@ -17,7 +17,7 @@ export interface TrackData {
   previousPosition: number | null
 }
 
-export type ChartKey = "global" | "chile" | "pop" | "urbano" | "rock" | "electronica" | "latina"
+export type ChartKey = "global" | "chile" | "pop" | "urbano" | "rock" | "electronica" | "latina" | "pedidos"
 
 export interface ChartConfig {
   key: ChartKey

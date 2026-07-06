@@ -9,7 +9,7 @@ import type { ChartData } from "@/lib/music/types"
 import type { ChartKey } from "@/lib/music/types"
 
 export function TopMusicalPageClient() {
-  const [activeChart, setActiveChart] = useState<ChartKey>("global")
+  const [activeChart, setActiveChart] = useState<ChartKey>("pedidos")
   const [charts, setCharts] = useState<ChartData[]>([])
   const [loading, setLoading] = useState(true)
   const [lastUpdate, setLastUpdate] = useState("")
