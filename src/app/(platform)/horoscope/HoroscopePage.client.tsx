@@ -210,6 +210,7 @@ export function HoroscopePageClient() {
 
   return (
     <div className="relative min-h-screen pt-20">
+      <audio src="/audio/fondo.mp3" autoPlay loop className="hidden" />
       <GalaxyBackground />
 
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40 pointer-events-none" />
