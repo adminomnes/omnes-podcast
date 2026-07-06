@@ -13,6 +13,15 @@ const TRENDING = [
 
 const FILTERS = ["todos", "episodios", "podcasts", "invitados", "clips", "temporadas"]
 
+const MOCK_CONTENT = [
+  { id: 1, type: "episodios", title: "El futuro de la Inteligencia Artificial", desc: "Discutimos cómo la IA cambiará el mundo del trabajo.", time: "45 min", views: "2.5K", tags: ["inteligencia artificial", "tecnología"] },
+  { id: 2, type: "podcasts", title: "Misterios Sin Resolver", desc: "Casos criminales que nunca encontraron respuesta.", time: "60 min", views: "10K", tags: ["misterio", "true crime"] },
+  { id: 3, type: "invitados", title: "Entrevista a Elon Musk", desc: "El CEO de SpaceX nos habla sobre sus planes para Marte.", time: "120 min", views: "50K", tags: ["ciencia", "entrevistas"] },
+  { id: 4, type: "clips", title: "El mejor chiste del año", desc: "Un fragmento súper gracioso de nuestro último episodio de comedia.", time: "3 min", views: "15K", tags: ["comedia", "clips"] },
+  { id: 5, type: "episodios", title: "Historia de Roma", desc: "Cómo un pequeño pueblo se convirtió en un imperio gigante.", time: "50 min", views: "4.2K", tags: ["historia", "cultura"] },
+  { id: 6, type: "podcasts", title: "Top 10 Musical Semanal", desc: "Repasamos los hits más escuchados del momento.", time: "30 min", views: "8K", tags: ["música", "cultura"] },
+]
+
 export function ExplorePageClient() {
   const [query, setQuery] = useState("")
   const [activeFilter, setActiveFilter] = useState("todos")
@@ -80,25 +89,31 @@ export function ExplorePageClient() {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 9 }).map((_, i) => {
+              {MOCK_CONTENT.filter(item => {
+                const matchesFilter = activeFilter === "todos" || item.type === activeFilter;
+                const matchesSearch = item.title.toLowerCase().includes(query.toLowerCase()) || 
+                                      item.desc.toLowerCase().includes(query.toLowerCase()) ||
+                                      item.tags.some(t => t.toLowerCase().includes(query.toLowerCase()));
+                return matchesFilter && matchesSearch;
+              }).map((item, i) => {
                 const hues = ["from-blue-600/30 to-purple-600/30", "from-purple-600/30 to-pink-600/30", "from-pink-600/30 to-amber-600/30"]
                 return (
-                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+                  <motion.div key={item.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
                     <GlassPanel className="group cursor-pointer overflow-hidden border border-white/[0.06] transition-all hover:bg-white/[0.08] hover:shadow-[0_0_30px_oklch(0.7_0.3_250/0.08)]">
-                      <div className={`aspect-video bg-gradient-to-br ${hues[i % 3]}`} />
+                      <div className={`aspect-video bg-gradient-to-br ${hues[item.id % 3]}`} />
                       <div className="space-y-2.5 p-5">
                         <div className="flex items-center gap-2 text-[10px] text-white/25">
-                          <Clock className="size-3" />45 min
-                          <Headphones className="size-3 ml-2" />2.5K
+                          <Clock className="size-3" />{item.time}
+                          <Headphones className="size-3 ml-2" />{item.views}
                         </div>
                         <h3 className="font-medium text-white/70 group-hover:text-white transition-colors">
-                          Resultado de exploración {i + 1}
+                          {item.title}
                         </h3>
                         <p className="line-clamp-2 text-xs leading-relaxed text-white/35">
-                          Resultados reales al conectar con Supabase.
+                          {item.desc}
                         </p>
-                        <div className="flex gap-1.5 pt-1">
-                          {["tag1", "tag2"].map((t) => (
+                        <div className="flex gap-1.5 pt-1 flex-wrap">
+                          {item.tags.map((t) => (
                             <span key={t} className="rounded-full bg-white/[0.05] px-2 py-0.5 text-[10px] text-white/25">#{t}</span>
                           ))}
                         </div>
@@ -107,6 +122,18 @@ export function ExplorePageClient() {
                   </motion.div>
                 )
               })}
+              
+              {MOCK_CONTENT.filter(item => {
+                const matchesFilter = activeFilter === "todos" || item.type === activeFilter;
+                const matchesSearch = item.title.toLowerCase().includes(query.toLowerCase()) || 
+                                      item.desc.toLowerCase().includes(query.toLowerCase()) ||
+                                      item.tags.some(t => t.toLowerCase().includes(query.toLowerCase()));
+                return matchesFilter && matchesSearch;
+              }).length === 0 && (
+                <div className="col-span-full py-20 text-center">
+                  <p className="text-white/40">No se encontraron resultados para "{query}"</p>
+                </div>
+              )}
             </div>
           </AnimatedSection>
         </div>
