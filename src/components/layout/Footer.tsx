@@ -17,6 +17,34 @@ const SOCIALS = [
 
 export function Footer() {
   const [email, setEmail] = useState("")
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [msg, setMsg] = useState("")
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+    setStatus("loading")
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setStatus("success")
+        setMsg(data.message)
+        setEmail("")
+      } else {
+        setStatus("error")
+        setMsg(data.error)
+      }
+    } catch {
+      setStatus("error")
+      setMsg("Error de conexión")
+    }
+    setTimeout(() => { setStatus("idle"); setMsg("") }, 4000)
+  }
 
   return (
     <footer className="relative overflow-hidden border-t border-white/[0.06]">
@@ -90,29 +118,32 @@ export function Footer() {
 
         <div className="border-t border-white/[0.06] py-12">
           <GlassPanel className="mx-auto max-w-lg overflow-hidden rounded-2xl p-1">
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="flex items-center gap-2"
-            >
+            <form onSubmit={handleSubmit} className="flex items-center gap-2">
               <div className="flex flex-1 items-center gap-2 px-4">
-                <Heart className="size-4 shrink-0 text-white/20" />
+                <Heart className={`size-4 shrink-0 transition-colors ${status === "success" ? "text-green-400" : "text-white/20"}`} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Recibe novedades semanales..."
                   className="flex-1 bg-transparent py-3 text-sm text-white/70 placeholder-white/20 outline-none"
+                  disabled={status === "loading"}
                 />
               </div>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-5 py-2.5 text-sm font-medium text-white transition-all hover:from-blue-500 hover:to-purple-500"
-              >
-                <Send className="size-3.5" />
-                Suscribirse
-              </motion.button>
+              {status === "success" ? (
+                <span className="text-sm text-green-400 px-3">{msg}</span>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-5 py-2.5 text-sm font-medium text-white transition-all hover:from-blue-500 hover:to-purple-500 disabled:opacity-50"
+                >
+                  <Send className="size-3.5" />
+                  {status === "loading" ? "Enviando..." : "Suscribirse"}
+                </motion.button>
+              )}
             </form>
           </GlassPanel>
         </div>
