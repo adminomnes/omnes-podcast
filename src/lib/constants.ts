@@ -29,6 +29,7 @@ export const PODCAST_THEMES: Record<string, PodcastTheme> = {
 
 export const NAV_LINKS = [
   { label: "Inicio", href: "/" },
+  { label: "Pulso", href: "/pulso" },
   { label: "Explorar", href: "/explore" },
   { label: "Clips", href: "/clips" },
   { label: "Comunidad", href: "/community" },
