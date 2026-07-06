@@ -14,6 +14,7 @@ const MOCK_NOTIFICATIONS = [
     description: "Descubre las canciones más pedidas de esta semana.", 
     time: "Hace 2 horas", 
     isNew: true,
+    href: "/top-musical",
     gradient: "from-fuchsia-600 to-pink-500",
     bgMuted: "bg-pink-500/10",
     textDark: "text-pink-400"
@@ -24,6 +25,7 @@ const MOCK_NOTIFICATIONS = [
     description: "Ya está disponible la última entrevista en nuestro canal.", 
     time: "Hace 1 día", 
     isNew: true,
+    href: "/explore",
     gradient: "from-blue-600 to-violet-500",
     bgMuted: "bg-violet-500/10",
     textDark: "text-violet-400"
@@ -34,6 +36,7 @@ const MOCK_NOTIFICATIONS = [
     description: "Explora todas las nuevas secciones de nuestra web.", 
     time: "Hace 3 días", 
     isNew: false,
+    href: "/",
     gradient: "from-emerald-500 to-teal-400",
     bgMuted: "bg-emerald-500/10",
     textDark: "text-emerald-400"
@@ -129,9 +132,11 @@ export function Navbar() {
                   </div>
                   <div className="max-h-[400px] overflow-y-auto p-2">
                     {MOCK_NOTIFICATIONS.map((notif) => (
-                      <div 
+                      <Link 
                         key={notif.id}
-                        className={`group relative mb-1 cursor-pointer overflow-hidden rounded-xl p-3 transition-all hover:bg-white/5 ${notif.isNew ? notif.bgMuted : ''}`}
+                        href={notif.href}
+                        onClick={() => setIsNotificationsOpen(false)}
+                        className={`group relative mb-1 block cursor-pointer overflow-hidden rounded-xl p-3 transition-all hover:bg-white/5 ${notif.isNew ? notif.bgMuted : ''}`}
                       >
                         {/* Borde izquierdo dinámico al hacer hover */}
                         <div className={`absolute inset-y-0 left-0 w-1 bg-gradient-to-b ${notif.gradient} opacity-0 transition-opacity group-hover:opacity-100`} />
@@ -152,7 +157,7 @@ export function Navbar() {
                             </span>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                   <div className="border-t border-white/10 p-2 text-center bg-white/[0.02]">
