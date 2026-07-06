@@ -10,45 +10,94 @@ import { cn } from "@/lib/utils"
 const INITIAL_NOTIFICATIONS = [
   { 
     id: 1, 
-    title: "¡Nuevo Top 10 Musical!", 
-    description: "Descubre las canciones más pedidas de esta semana.", 
-    time: "Hace 2 horas", 
-    isNew: true,
-    href: "/top-musical",
-    gradient: "from-fuchsia-600 to-pink-500",
-    bgMuted: "bg-pink-500/10",
-    textDark: "text-pink-400"
-  },
-  { 
-    id: 2, 
-    title: "Nuevo Episodio de OMNES", 
-    description: "Ya está disponible la última entrevista en nuestro canal.", 
-    time: "Hace 1 día", 
-    isNew: true,
-    href: "/explore",
-    gradient: "from-blue-600 to-violet-500",
-    bgMuted: "bg-violet-500/10",
-    textDark: "text-violet-400"
-  },
-  { 
-    id: 3, 
     title: "Bienvenido a OMNES Podcast", 
     description: "Explora todas las nuevas secciones de nuestra web.", 
-    time: "Hace 3 días", 
+    time: "Hace un momento", 
     isNew: false,
     href: "/",
     gradient: "from-emerald-500 to-teal-400",
     bgMuted: "bg-emerald-500/10",
     textDark: "text-emerald-400"
-  },
+  }
 ]
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
-  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS)
+  const [notifications, setNotifications] = useState<any[]>([])
   const [isScrolled, setIsScrolled] = useState(false)
   const notificationsRef = useRef<HTMLDivElement>(null)
+
+  // Cargar notificaciones guardadas en localStorage al iniciar
+  useEffect(() => {
+    const saved = localStorage.getItem("omnes_notifications")
+    if (saved) {
+      try {
+        setNotifications(JSON.parse(saved))
+      } catch {
+        setNotifications(INITIAL_NOTIFICATIONS)
+      }
+    } else {
+      setNotifications(INITIAL_NOTIFICATIONS)
+    }
+  }, [])
+
+  // Guardar notificaciones en localStorage cada vez que cambien
+  useEffect(() => {
+    if (notifications.length > 0) {
+      localStorage.setItem("omnes_notifications", JSON.stringify(notifications))
+    }
+  }, [notifications])
+
+  // Lógica Automática: Chequear si hay un nuevo Top 10
+  useEffect(() => {
+    async function checkUpdates() {
+      try {
+        const res = await fetch("/api/music?chart=pedidos")
+        if (!res.ok) return
+        const data = await res.json()
+        
+        if (data.updatedAt) {
+          const lastUpdateStr = localStorage.getItem("omnes_last_music_update")
+          const serverUpdate = new Date(data.updatedAt).getTime()
+          const lastUpdate = lastUpdateStr ? parseInt(lastUpdateStr) : 0
+
+          // Si el servidor tiene datos más nuevos (por al menos 1 minuto de diferencia)
+          if (serverUpdate > lastUpdate + 60000) {
+            localStorage.setItem("omnes_last_music_update", serverUpdate.toString())
+            
+            // Agregar la nueva notificación automáticamente si no es la primera vez que entra
+            if (lastUpdate !== 0) {
+              setNotifications(prev => {
+                const newNotif = {
+                  id: Date.now(),
+                  title: "¡El Top 10 se ha actualizado!",
+                  description: "Nuevas canciones y movimientos en el chart Más Pedidos.",
+                  time: "Hace un momento",
+                  isNew: true,
+                  href: "/top-musical",
+                  gradient: "from-fuchsia-600 to-pink-500",
+                  bgMuted: "bg-pink-500/10",
+                  textDark: "text-pink-400"
+                }
+                // Evitar duplicados exactos en el mismo día
+                const isDuplicate = prev.some(n => n.title === newNotif.title && n.time === newNotif.time)
+                if (isDuplicate) return prev
+                return [newNotif, ...prev].slice(0, 10) // Mantener maximo 10
+              })
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error checking for updates:", err)
+      }
+    }
+    
+    // Chequear al cargar y luego cada 5 minutos
+    checkUpdates()
+    const interval = setInterval(checkUpdates, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const unreadCount = notifications.filter(n => n.isNew).length
 
