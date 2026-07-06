@@ -58,11 +58,11 @@ export function Hero() {
   }, [])
 
   return (
-    <section ref={containerRef} className="relative flex min-h-screen items-center justify-center overflow-hidden">
+    <section ref={containerRef} className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
       {/* Hero image background */}
       <div className="absolute inset-0">
-        <img src="/images/hero.jpeg" alt="" className="size-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/60 via-black/70 to-purple-950/60" />
+        <img src="/images/hero.jpeg" alt="" className="size-full object-cover object-center" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/40 via-black/40 to-purple-950/40" />
       </div>
       <div className="absolute inset-0 opacity-30" style={{
         background: `
@@ -154,8 +154,8 @@ export function Hero() {
             <img
               src="/images/logo.png"
               alt="OMNES PODCAST"
-              className="relative h-auto w-[320px] object-contain sm:w-[400px] md:w-[500px]"
-              style={{ mixBlendMode: "screen" }}
+              className="w-[400px] object-cover sm:w-[500px] md:w-[600px]"
+              style={{ clipPath: "inset(15% 10% 15% 10%)" }}
             />
           </motion.div>
         </div>
