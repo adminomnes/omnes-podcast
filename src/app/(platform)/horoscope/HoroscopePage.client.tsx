@@ -262,7 +262,7 @@ export function HoroscopePageClient() {
           <p className="mb-4 text-sm font-medium tracking-wider text-white/30">
             SELECCIONA TU SIGNO
           </p>
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-3">
             {SIGNS.map((sign, i) => {
               const isSelected = selectedSign === sign
               return (
@@ -274,17 +274,17 @@ export function HoroscopePageClient() {
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleSelectSign(sign)}
-                  className={`group relative rounded-2xl border px-4 py-3 text-center transition-all duration-300 sm:px-5 ${
+                  className={`group relative rounded-2xl border px-6 py-5 text-center transition-all duration-300 sm:px-8 ${
                     isSelected
                       ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_30px_oklch(0.6_0.3_280/0.15)]"
                       : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.15] hover:bg-white/[0.05]"
                   }`}
                 >
-                  <div className="text-xl">{ZODIAC_EMOJIS[sign]}</div>
-                  <div className={`text-sm font-medium ${isSelected ? "text-purple-300" : "text-white/60 group-hover:text-white/80"}`}>
+                  <div className="mb-1 text-3xl">{ZODIAC_EMOJIS[sign]}</div>
+                  <div className={`text-base font-medium ${isSelected ? "text-purple-300" : "text-white/60 group-hover:text-white/80"}`}>
                     {sign}
                   </div>
-                  <div className="mt-0.5 text-[10px] text-white/20">{SIGN_DATES[sign]}</div>
+                  <div className="mt-1 text-[11px] text-white/20">{SIGN_DATES[sign]}</div>
                 </motion.button>
               )
             })}
