@@ -214,6 +214,10 @@ export function HoroscopePageClient() {
 
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40 pointer-events-none" />
 
+      <div className="pointer-events-none fixed left-0 top-1/2 z-[5] -translate-y-1/2 hidden lg:block">
+        <img src="/images/john.png" alt="" className="h-[500px] w-auto object-contain opacity-30" />
+      </div>
+
       <div className="relative z-10 mx-auto max-w-7xl px-6 pb-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
