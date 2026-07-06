@@ -22,8 +22,8 @@ export function Navbar() {
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-700",
         isScrolled
-          ? "bg-black/70 backdrop-blur-2xl border-b border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.5)]"
-          : "bg-gradient-to-b from-black/40 to-transparent"
+          ? "bg-black/80 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
+          : "bg-black/50 backdrop-blur-md border-b border-white/[0.06]"
       )}
     >
       <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
@@ -42,10 +42,10 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="group relative rounded-full px-4 py-2 text-sm text-white/50 transition-colors hover:text-white/90"
+              className="group relative rounded-full px-4 py-2 text-sm font-medium text-white/85 drop-shadow-md transition-colors hover:text-white"
             >
               {link.label}
-              <span className="absolute inset-x-2 -bottom-px h-px scale-x-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-transform group-hover:scale-x-100" />
+              <span className="absolute inset-x-2 -bottom-px h-px scale-x-0 bg-gradient-to-r from-blue-400 to-purple-400 transition-transform group-hover:scale-x-100" />
             </Link>
           ))}
         </div>
