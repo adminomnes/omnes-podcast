@@ -2,19 +2,39 @@
 
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { useState, useEffect } from "react"
-import { Menu, X, Search, Bell } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Menu, X, Search, Bell, CheckCircle2 } from "lucide-react"
 import { NAV_LINKS, SITE_NAME } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
+const MOCK_NOTIFICATIONS = [
+  { id: 1, title: "¡Nuevo Top 10 Musical!", description: "Descubre las canciones más pedidas de esta semana.", time: "Hace 2 horas", isNew: true },
+  { id: 2, title: "Nuevo Episodio de OMNES", description: "Ya está disponible la última entrevista en nuestro canal.", time: "Hace 1 día", isNew: true },
+  { id: 3, title: "Bienvenido a OMNES Podcast", description: "Explora todas las nuevas secciones de nuestra web.", time: "Hace 3 días", isNew: false },
+]
+
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const notificationsRef = useRef<HTMLDivElement>(null)
 
+  // Manejo del scroll
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 60)
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  // Cerrar notificaciones si se hace clic fuera
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
   return (
@@ -55,10 +75,65 @@ export function Navbar() {
           <button className="relative rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80">
             <Search className="size-4" />
           </button>
-          <button className="relative rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80">
-            <Bell className="size-4" />
-            <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-blue-500" />
-          </button>
+          <div className="relative" ref={notificationsRef}>
+            <button 
+              onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+              className="relative rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80"
+            >
+              <Bell className="size-4" />
+              <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-blue-500" />
+            </button>
+
+            {/* Dropdown de Novedades */}
+            <AnimatePresence>
+              {isNotificationsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-2xl border border-white/10 bg-black/80 shadow-2xl backdrop-blur-xl"
+                >
+                  <div className="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-3">
+                    <h3 className="font-semibold text-white">Novedades</h3>
+                    <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-xs font-medium text-blue-400">
+                      2 nuevas
+                    </span>
+                  </div>
+                  <div className="max-h-[400px] overflow-y-auto p-2">
+                    {MOCK_NOTIFICATIONS.map((notif) => (
+                      <div 
+                        key={notif.id}
+                        className={`mb-1 cursor-pointer rounded-xl p-3 transition-colors hover:bg-white/5 ${notif.isNew ? 'bg-blue-500/5' : ''}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`mt-0.5 rounded-full p-1.5 ${notif.isNew ? 'bg-blue-500/20 text-blue-400' : 'bg-white/5 text-white/40'}`}>
+                            {notif.isNew ? <Bell className="size-3.5" /> : <CheckCircle2 className="size-3.5" />}
+                          </div>
+                          <div>
+                            <p className={`text-sm font-medium ${notif.isNew ? 'text-white' : 'text-white/70'}`}>
+                              {notif.title}
+                            </p>
+                            <p className="mt-0.5 text-xs text-white/50 line-clamp-2">
+                              {notif.description}
+                            </p>
+                            <span className="mt-1.5 block text-[10px] text-white/30">
+                              {notif.time}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border-t border-white/10 p-2 text-center">
+                    <button className="w-full rounded-lg px-3 py-2 text-xs font-medium text-white/40 transition-colors hover:bg-white/5 hover:text-white/80">
+                      Marcar todas como leídas
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80 md:hidden"
