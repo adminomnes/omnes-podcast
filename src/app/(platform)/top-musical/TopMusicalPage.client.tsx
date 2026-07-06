@@ -114,36 +114,56 @@ export function TopMusicalPageClient() {
   const currentTheme = CHART_THEMES[activeChart] || CHART_THEMES.global
 
   return (
-    <div className="relative min-h-screen pt-20">
-      <div 
-        className="pointer-events-none fixed inset-0 transition-all duration-1000 ease-out" 
-        style={{
-          background: currentTheme.bgGradient,
-        }} 
+    <div className="relative min-h-screen">
+      {/* ── Hero Banner con top.jpeg ── */}
+      <div className="relative h-72 w-full overflow-hidden md:h-96">
+        <img
+          src="/images/top.jpeg"
+          alt="Top 10 Musical"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        {/* Overlay oscuro para legibilidad */}
+        <div className="absolute inset-0 bg-black/55" />
+        {/* Gradiente de fade hacia abajo */}
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black to-transparent" />
+        {/* Gradiente dinámico de color temático sobre la imagen */}
+        <div
+          className="absolute inset-0 transition-all duration-1000 ease-out"
+          style={{ background: currentTheme.bgGradient, mixBlendMode: "color" }}
+        />
+        {/* Contenido centrado sobre el banner */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pt-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <span className={`inline-block rounded-full px-4 py-1 text-xs font-semibold tracking-wider uppercase border backdrop-blur-sm transition-all duration-500 ${currentTheme.badgeStyle}`}>
+              🎵 {currentChart?.label || "Top 10"}
+            </span>
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="text-center text-5xl font-black tracking-tight drop-shadow-2xl md:text-7xl"
+          >
+            <span className={`bg-gradient-to-r ${currentTheme.accentText} bg-clip-text text-transparent transition-all duration-700`}>
+              Top 10
+            </span>
+            <span className="text-white"> {currentChart?.label || "Musical"}</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
+            className="text-sm text-white/60"
+          >
+            <Music className="mb-0.5 mr-1 inline-block size-3.5 animate-pulse" />
+            Lo más escuchado del momento.
+          </motion.p>
+        </div>
+      </div>
+
+      {/* Fondo dinámico debajo del banner */}
+      <div
+        className="pointer-events-none fixed inset-0 transition-all duration-1000 ease-out"
+        style={{ background: currentTheme.bgGradient }}
       />
 
       <div className="relative z-10 mx-auto max-w-5xl px-6 pb-24">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-2 text-center">
-          <span className={`inline-block rounded-full px-4 py-1 text-xs font-semibold tracking-wider uppercase transition-all duration-500 border backdrop-blur-sm ${currentTheme.badgeStyle}`}>
-            🎵 {currentChart?.label || "Top 10"}
-          </span>
-        </motion.div>
-
-        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="mb-1 text-center text-5xl font-black tracking-tight md:text-7xl"
-        >
-          <span className={`bg-gradient-to-r ${currentTheme.accentText} bg-clip-text text-transparent transition-all duration-700`}>
-            Top 10
-          </span>
-          <span className="text-white/90"> {currentChart?.label || "Musical"}</span>
-        </motion.h1>
-
-        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="mx-auto mb-8 max-w-md text-center text-sm text-white/40"
-        >
-          <Music className="mb-0.5 mr-1 inline-block size-3.5 animate-pulse" />
-          Lo más escuchado del momento.
-        </motion.p>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           className="mb-8"
