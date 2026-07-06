@@ -1,5 +1,36 @@
-import { createClient } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
+
+const R2_URL = process.env.R2_PUBLIC_URL!
+const BUCKET = process.env.R2_BUCKET_NAME!
+const ACCOUNT_ID = process.env.R2_ACCOUNT_ID!
+const ACCESS_KEY = process.env.R2_ACCESS_KEY_ID!
+const SECRET_KEY = process.env.R2_SECRET_ACCESS_KEY!
+
+async function getSubscribers(): Promise<string[]> {
+  try {
+    const res = await fetch(`${R2_URL}/subscribers.json`)
+    if (!res.ok) return []
+    const data = await res.json()
+    return Array.isArray(data) ? data : []
+  } catch {
+    return []
+  }
+}
+
+async function saveSubscribers(emails: string[]) {
+  const url = `https://${ACCOUNT_ID}.r2.cloudflarestorage.com/${BUCKET}/subscribers.json`
+  const credential = `${ACCESS_KEY}:${SECRET_KEY}`
+  const auth = "Basic " + Buffer.from(credential).toString("base64")
+
+  await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Authorization": auth,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(emails),
+  })
+}
 
 export async function POST(req: Request) {
   try {
@@ -8,18 +39,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email inválido" }, { status: 400 })
     }
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-
-    const { error } = await supabase.from("subscribers").insert({ email })
-    if (error) {
-      if (error.code === "23505") {
-        return NextResponse.json({ message: "Ya estás suscrito" })
-      }
-      throw error
+    const subscribers = await getSubscribers()
+    if (subscribers.includes(email)) {
+      return NextResponse.json({ message: "Ya estás suscrito" })
     }
+
+    subscribers.push(email)
+    await saveSubscribers(subscribers)
 
     return NextResponse.json({ message: "¡Suscrito!" })
   } catch {
