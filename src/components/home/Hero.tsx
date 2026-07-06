@@ -60,8 +60,11 @@ export function Hero() {
 
   return (
     <section ref={containerRef} className="relative flex min-h-screen items-center justify-center overflow-hidden">
-      {/* Capas de fondo coloridas */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-950/60 via-black to-purple-950/60" />
+      {/* Hero image background */}
+      <div className="absolute inset-0">
+        <img src="/images/hero.jpeg" alt="" className="size-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/60 via-black/70 to-purple-950/60" />
+      </div>
       <div className="absolute inset-0 opacity-30" style={{
         background: `
           radial-gradient(circle at 15% 20%, oklch(0.7 0.3 250 / 0.15) 0%, transparent 50%),
