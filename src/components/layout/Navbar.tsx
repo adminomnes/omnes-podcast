@@ -42,7 +42,8 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="group relative rounded-full px-4 py-2 text-sm font-medium text-white/85 drop-shadow-md transition-colors hover:text-white"
+              className="group relative rounded-full px-4 py-2 text-base font-bold text-white transition-colors hover:text-white/80"
+              style={{ textShadow: "0 1px 8px rgba(0,0,0,0.9), 0 0px 2px rgba(0,0,0,1)" }}
             >
               {link.label}
               <span className="absolute inset-x-2 -bottom-px h-px scale-x-0 bg-gradient-to-r from-blue-400 to-purple-400 transition-transform group-hover:scale-x-100" />
