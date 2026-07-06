@@ -36,7 +36,6 @@ function AnimatedCounter({ target, suffix }: { target: number; suffix: string })
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
   const statsRef = useRef<HTMLDivElement>(null)
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 })
@@ -52,7 +51,6 @@ export function Hero() {
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: "power4.out" } })
     tl.fromTo(".hero-title-line", { y: 200, opacity: 0, rotateX: 25 }, { y: 0, opacity: 1, rotateX: 0, duration: 1.2, stagger: 0.15 })
-      .fromTo(subtitleRef.current, { y: 40, opacity: 0, filter: "blur(10px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.8 }, "-=0.6")
       .fromTo(ctaRef.current?.children || [], { y: 30, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.6, stagger: 0.15 }, "-=0.4")
       .fromTo(statsRef.current?.children || [], { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.12 }, "-=0.2")
   }, [])
@@ -158,14 +156,6 @@ export function Hero() {
               style={{ clipPath: "inset(15% 10% 15% 10%)" }}
             />
           </motion.div>
-        </div>
-
-        <div className="overflow-hidden">
-          <p ref={subtitleRef} className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed sm:text-xl">
-            <span className="text-white/50">Historias que se escuchan.</span>
-            <br />
-            <span className="text-gradient-alt font-semibold">Conversaciones que se viven.</span>
-          </p>
         </div>
 
         <div ref={ctaRef} className="mt-12 flex flex-wrap items-center justify-center gap-4">
