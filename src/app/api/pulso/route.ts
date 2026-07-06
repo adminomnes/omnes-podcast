@@ -48,6 +48,62 @@ function shuffleArray<T>(arr: T[]): T[] {
   return a
 }
 
+function isSpanish(text: string): boolean {
+  const spanishWords = /\b(que|de|la|el|en|los|las|por|con|una|para|del|sus|como|más|pero|este|esta|entre|tiene|sobre|tras|durante|donde|quien|nuestro|país|año|dijo|sido|según|cada|parte|puede|tienen|todo|tanto|mundo|hace|gobierno|país|forma|caso|tiempo|luego|tres|ser|han|era|son|había|nueva|nuevo|video|foto|dijo|señaló|agregó|informó|afirmó|indica|explica|presentó|llegó|realizó|podría|debe|debería|tras|así|tan|allí|aquel|aquella|estos|esas|esos|gran|mayor|menor|través|embargo|decir|hacer|ver|saber|haber|tener|nacional|internacional|local|social|política|economía|cultura|deporte|salud|educación|investigación|desarrollo|tecnología|empresa|mercado|industria|proyecto|sistema|proceso|resultado|investigadores|científicos|expertos|análisis|estudio|datos|información|noticia|reportaje|entrevista|crónica|opinión|editorial|columna|artículo|imagen|audio|podcast)/i
+  return spanishWords.test(text)
+}
+
+const translationCache = new Map<string, string>()
+const OPENAI_KEY = process.env.OPENAI_API_KEY
+
+async function translateToSpanish(text: string): Promise<string> {
+  if (!text) return text
+  if (isSpanish(text)) return text
+
+  const cached = translationCache.get(text)
+  if (cached) return cached
+
+  if (OPENAI_KEY) {
+    try {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENAI_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: "Traduce al español. Responde solo con la traducción, sin explicaciones. Si ya está en español, devuélvelo igual." },
+            { role: "user", content: text },
+          ],
+          max_tokens: text.length + 100,
+          temperature: 0.1,
+        }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        const translated = data.choices?.[0]?.message?.content?.trim() || text
+        translationCache.set(text, translated)
+        return translated
+      }
+    } catch {
+      /* fallback to original */
+    }
+  }
+
+  return text
+}
+
+async function translateItem(item: NewsItem): Promise<NewsItem> {
+  const [title, description, content] = await Promise.all([
+    translateToSpanish(item.title),
+    translateToSpanish(item.description),
+    translateToSpanish(item.content),
+  ])
+  return { ...item, title, description, content }
+}
+
 export async function GET() {
   if (cache && Date.now() - cache.timestamp < CACHE_TTL) {
     return NextResponse.json(cache.data)
@@ -69,7 +125,7 @@ export async function GET() {
             results.push({
               id: generateId(title, feed.label),
               title,
-              description: description.substring(0, 200),
+              description: description.substring(0, 300),
               content: content.substring(0, 500),
               image: extractImage(item),
               url: item.link || "",
@@ -84,6 +140,19 @@ export async function GET() {
         }
       })
     )
+
+    const toTranslate = results.filter((item) => !isSpanish(item.title))
+    if (toTranslate.length > 0) {
+      const translated = await Promise.allSettled(
+        toTranslate.map((item) => translateItem(item))
+      )
+      translated.forEach((result, i) => {
+        if (result.status === "fulfilled") {
+          const idx = results.indexOf(toTranslate[i])
+          if (idx !== -1) results[idx] = result.value
+        }
+      })
+    }
 
     const now = Date.now()
     results.forEach((item) => {
@@ -138,13 +207,7 @@ export async function GET() {
 }
 
 function generateAiSummary(title: string, desc: string): string {
-  const templates = [
-    `${title}. ${desc.substring(0, 80)}... Un tema que está dando mucho que hablar.`,
-    `En resumen: ${title}. ${desc.substring(0, 60)}... ¿Qué opinas tú?`,
-    `Lo que tienes que saber: ${title}. ${desc.substring(0, 70)}... Sigue leyendo para más detalles.`,
-    `${title}. Una noticia que no te puedes perder. ${desc.substring(0, 50)}...`,
-  ]
-  return templates[Math.floor(Math.random() * templates.length)]
+  return `${title}. ${desc.substring(0, 80)}...`
 }
 
 function generateKeyPoints(desc: string): string[] {
@@ -153,18 +216,16 @@ function generateKeyPoints(desc: string): string[] {
     return points.slice(0, 3).map((p) => p + ".")
   }
   return [
-    "Esta noticia está generando conversación en redes sociales.",
-    "Expertos en la materia ya están analizando sus implicancias.",
-    "El impacto de esta noticia podría sentirse en los próximos días.",
+    "Esta noticia ya está generando conversación.",
+    "Expertos analizan sus implicancias.",
+    "El impacto se sentirá en los próximos días.",
   ]
 }
 
 function generatePodcastQuestions(title: string): string[] {
   return [
-    `¿Crees que ${title.toLowerCase()} cambiará la forma en que vemos el mundo?`,
-    `¿Qué impacto crees que tendrá esta noticia en Chile?`,
-    `¿Estamos preparados como sociedad para lo que viene?`,
-    `¿Cómo crees que evolucionará esta historia en los próximos meses?`,
-    `Si pudieras preguntarle algo a un experto sobre esto, ¿qué le preguntarías?`,
+    `¿Cómo crees que ${title.toLowerCase()} nos afecta directamente?`,
+    `¿Qué opinas sobre esto? ¿Estamos preparados?`,
+    `Si pudieras preguntarle algo a un experto, ¿qué sería?`,
   ].slice(0, 2 + Math.floor(Math.random() * 2))
 }

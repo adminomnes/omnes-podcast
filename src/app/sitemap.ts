@@ -22,6 +22,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/clips`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
     { url: `${baseUrl}/community`, lastModified: new Date(), changeFrequency: "daily" as const, priority: 0.7 },
     { url: `${baseUrl}/ai`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.6 },
+    { url: `${baseUrl}/horoscope`, lastModified: new Date(), changeFrequency: "daily" as const, priority: 0.8 },
+    { url: `${baseUrl}/pulso`, lastModified: new Date(), changeFrequency: "hourly" as const, priority: 0.9 },
   ]
 
   const podcastRoutes = PODCASTS.map((p) => ({
