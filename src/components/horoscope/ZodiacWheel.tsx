@@ -16,6 +16,17 @@ const ZODIAC_SYMBOLS: Record<string, string> = {
   Sagitario: "\u2650", Capricornio: "\u2651", Acuario: "\u2652", Piscis: "\u2653",
 }
 
+const NEON_COLORS = [
+  { idx: 0, h: 280 },  { idx: 1, h: 180 },  { idx: 2, h: 30 },
+  { idx: 3, h: 340 },  { idx: 4, h: 80 },   { idx: 5, h: 220 },
+  { idx: 6, h: 310 },  { idx: 7, h: 160 },  { idx: 8, h: 50 },
+  { idx: 9, h: 250 },  { idx: 10, h: 300 }, { idx: 11, h: 200 },
+]
+
+function neon(h: number, l: number, c: number, a = 1) {
+  return a < 1 ? `oklch(${l} ${c} ${h} / ${a})` : `oklch(${l} ${c} ${h})`
+}
+
 interface Particle {
   id: number; x: number; y: number; angle: number; dist: number; color: string
 }
@@ -172,11 +183,12 @@ export function ZodiacWheel({ onSelect, selectedSign }: ZodiacWheelProps) {
               >
                 <motion.ellipse
                   cx={x} cy={y}
-                  rx={NODE_R + 6} ry={NODE_R + 6}
-                  fill="oklch(0.7 0.3 280 / 0.04)" filter="url(#gv)"
+                  rx={NODE_R + 8} ry={NODE_R + 8}
+                  fill={sel ? neon(NEON_COLORS[i].h, 0.75, 0.35, 0.5) : neon(NEON_COLORS[i].h, 0.6, 0.25, 0.12)}
+                  filter="url(#gv)"
                   animate={{
-                    ry: [NODE_R + 6, NODE_R + 12, NODE_R + 6],
-                    opacity: sel ? 0.8 : [0.3, 0.5, 0.3],
+                    ry: [NODE_R + 8, NODE_R + 14, NODE_R + 8],
+                    opacity: sel ? 1 : [0.3, 0.5, 0.3],
                   }}
                   transition={{ duration: 3 + (i % 3), repeat: Infinity, ease: "easeInOut" }}
                   whileHover={{ scale: 1.12 }}
@@ -184,17 +196,17 @@ export function ZodiacWheel({ onSelect, selectedSign }: ZodiacWheelProps) {
 
                 <circle cx={x} cy={y} r={NODE_R}
                   fill="oklch(0.08 0.04 270 / 0.6)"
-                  stroke={sel ? "oklch(0.7 0.3 280 / 0.6)" : "oklch(0.6 0.2 270 / 0.25)"}
+                  stroke={sel ? neon(NEON_COLORS[i].h, 0.7, 0.35, 0.8) : neon(NEON_COLORS[i].h, 0.5, 0.2, 0.3)}
                   strokeWidth="2" filter="url(#gb)"
                 />
                 <circle cx={x} cy={y} r={NODE_R - 3}
                   fill="oklch(0.08 0.04 270 / 0.4)"
-                  stroke={sel ? "oklch(0.8 0.3 280 / 0.3)" : "oklch(0.7 0.2 270 / 0.1)"}
+                  stroke={sel ? neon(NEON_COLORS[i].h, 0.8, 0.35, 0.4) : neon(NEON_COLORS[i].h, 0.5, 0.15, 0.15)}
                   strokeWidth="0.5"
                 />
 
                 <text x={x} y={y - 2} textAnchor="middle" dominantBaseline="central"
-                  fontSize="30" fill={sel ? "oklch(0.85 0.3 280)" : "oklch(0.75 0.2 270 / 0.8)"}
+                  fontSize="30" fill={sel ? neon(NEON_COLORS[i].h, 0.85, 0.35) : neon(NEON_COLORS[i].h, 0.55, 0.2)}
                   filter="url(#gw)"
                 >
                   {ZODIAC_SYMBOLS[sign]}
@@ -202,7 +214,7 @@ export function ZodiacWheel({ onSelect, selectedSign }: ZodiacWheelProps) {
 
                 <text x={x} y={y + 24} textAnchor="middle" dominantBaseline="central"
                   fontSize="12" fontWeight="600"
-                  fill={sel ? "oklch(0.8 0.2 280 / 0.8)" : "oklch(0.6 0.15 270 / 0.5)"}
+                  fill={sel ? neon(NEON_COLORS[i].h, 0.75, 0.3) : neon(NEON_COLORS[i].h, 0.5, 0.15)}
                 >
                   {sign}
                 </text>

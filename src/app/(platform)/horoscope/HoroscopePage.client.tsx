@@ -221,7 +221,7 @@ export function HoroscopePageClient() {
           className="mb-2 text-center"
         >
           <span className="inline-block rounded-full bg-purple-500/10 px-4 py-1 text-xs font-medium tracking-wider text-purple-300 backdrop-blur-sm">
-            🔮 EL HOR\u00d3SCOPO DEL CAOS\u2122
+            🔮 EL HORÓSCOPO DEL CAOS™
           </span>
         </motion.div>
 
