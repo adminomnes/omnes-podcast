@@ -7,7 +7,7 @@ import { Menu, X, Search, Bell, CheckCircle2 } from "lucide-react"
 import { NAV_LINKS, SITE_NAME } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
-const MOCK_NOTIFICATIONS = [
+const INITIAL_NOTIFICATIONS = [
   { 
     id: 1, 
     title: "¡Nuevo Top 10 Musical!", 
@@ -46,8 +46,19 @@ const MOCK_NOTIFICATIONS = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS)
   const [isScrolled, setIsScrolled] = useState(false)
   const notificationsRef = useRef<HTMLDivElement>(null)
+
+  const unreadCount = notifications.filter(n => n.isNew).length
+
+  const markAsRead = (id: number) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, isNew: false } : n))
+  }
+
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, isNew: false })))
+  }
 
   // Manejo del scroll
   useEffect(() => {
@@ -111,7 +122,7 @@ export function Navbar() {
               className="relative rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80"
             >
               <Bell className="size-4" />
-              <span className="absolute top-1 right-1 size-2.5 rounded-full bg-gradient-to-tr from-pink-500 to-orange-400 shadow-[0_0_8px_rgba(236,72,153,0.8)] animate-pulse" />
+              <span className={`absolute top-1 right-1 size-2.5 rounded-full bg-gradient-to-tr from-pink-500 to-orange-400 shadow-[0_0_8px_rgba(236,72,153,0.8)] ${unreadCount > 0 ? 'animate-pulse' : 'hidden'}`} />
             </button>
 
             {/* Dropdown de Novedades */}
@@ -126,16 +137,21 @@ export function Navbar() {
                 >
                   <div className="flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-blue-500/10 px-4 py-3">
                     <h3 className="font-bold text-white drop-shadow-md">Novedades</h3>
-                    <span className="rounded-full bg-gradient-to-r from-pink-500 to-orange-400 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg">
-                      2 nuevas
-                    </span>
+                    {unreadCount > 0 && (
+                      <span className="rounded-full bg-gradient-to-r from-pink-500 to-orange-400 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg">
+                        {unreadCount} nuevas
+                      </span>
+                    )}
                   </div>
                   <div className="max-h-[400px] overflow-y-auto p-2">
-                    {MOCK_NOTIFICATIONS.map((notif) => (
+                    {notifications.map((notif) => (
                       <Link 
                         key={notif.id}
                         href={notif.href}
-                        onClick={() => setIsNotificationsOpen(false)}
+                        onClick={() => {
+                          markAsRead(notif.id)
+                          setIsNotificationsOpen(false)
+                        }}
                         className={`group relative mb-1 block cursor-pointer overflow-hidden rounded-xl p-3 transition-all hover:bg-white/5 ${notif.isNew ? notif.bgMuted : ''}`}
                       >
                         {/* Borde izquierdo dinámico al hacer hover */}
@@ -161,7 +177,10 @@ export function Navbar() {
                     ))}
                   </div>
                   <div className="border-t border-white/10 p-2 text-center bg-white/[0.02]">
-                    <button className="w-full rounded-lg px-3 py-2 text-xs font-semibold text-white/50 transition-colors hover:bg-white/10 hover:text-white">
+                    <button 
+                      onClick={markAllAsRead}
+                      className="w-full rounded-lg px-3 py-2 text-xs font-semibold text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+                    >
                       Marcar todas como leídas
                     </button>
                   </div>
