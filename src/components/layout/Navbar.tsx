@@ -23,10 +23,10 @@ export function Navbar() {
         "fixed top-0 inset-x-0 z-50 transition-all duration-700",
         isScrolled
           ? "bg-black/80 backdrop-blur-2xl border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
-          : "bg-black/50 backdrop-blur-md border-b border-white/[0.06]"
+          : "bg-gradient-to-b from-black/60 to-transparent pt-2"
       )}
     >
-      <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link href="/" className="group flex items-center gap-3">
           <div className="relative size-8">
             <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 opacity-80 blur-sm group-hover:opacity-100 transition-opacity" />
