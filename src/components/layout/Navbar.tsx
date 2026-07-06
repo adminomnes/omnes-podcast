@@ -8,9 +8,36 @@ import { NAV_LINKS, SITE_NAME } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
 const MOCK_NOTIFICATIONS = [
-  { id: 1, title: "¡Nuevo Top 10 Musical!", description: "Descubre las canciones más pedidas de esta semana.", time: "Hace 2 horas", isNew: true },
-  { id: 2, title: "Nuevo Episodio de OMNES", description: "Ya está disponible la última entrevista en nuestro canal.", time: "Hace 1 día", isNew: true },
-  { id: 3, title: "Bienvenido a OMNES Podcast", description: "Explora todas las nuevas secciones de nuestra web.", time: "Hace 3 días", isNew: false },
+  { 
+    id: 1, 
+    title: "¡Nuevo Top 10 Musical!", 
+    description: "Descubre las canciones más pedidas de esta semana.", 
+    time: "Hace 2 horas", 
+    isNew: true,
+    gradient: "from-fuchsia-600 to-pink-500",
+    bgMuted: "bg-pink-500/10",
+    textDark: "text-pink-400"
+  },
+  { 
+    id: 2, 
+    title: "Nuevo Episodio de OMNES", 
+    description: "Ya está disponible la última entrevista en nuestro canal.", 
+    time: "Hace 1 día", 
+    isNew: true,
+    gradient: "from-blue-600 to-violet-500",
+    bgMuted: "bg-violet-500/10",
+    textDark: "text-violet-400"
+  },
+  { 
+    id: 3, 
+    title: "Bienvenido a OMNES Podcast", 
+    description: "Explora todas las nuevas secciones de nuestra web.", 
+    time: "Hace 3 días", 
+    isNew: false,
+    gradient: "from-emerald-500 to-teal-400",
+    bgMuted: "bg-emerald-500/10",
+    textDark: "text-emerald-400"
+  },
 ]
 
 export function Navbar() {
@@ -81,7 +108,7 @@ export function Navbar() {
               className="relative rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80"
             >
               <Bell className="size-4" />
-              <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-blue-500" />
+              <span className="absolute top-1 right-1 size-2.5 rounded-full bg-gradient-to-tr from-pink-500 to-orange-400 shadow-[0_0_8px_rgba(236,72,153,0.8)] animate-pulse" />
             </button>
 
             {/* Dropdown de Novedades */}
@@ -92,11 +119,11 @@ export function Navbar() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-2xl border border-white/10 bg-black/80 shadow-2xl backdrop-blur-xl"
+                  className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0a]/90 shadow-[0_10px_40px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
                 >
-                  <div className="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-3">
-                    <h3 className="font-semibold text-white">Novedades</h3>
-                    <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-xs font-medium text-blue-400">
+                  <div className="flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-blue-500/10 px-4 py-3">
+                    <h3 className="font-bold text-white drop-shadow-md">Novedades</h3>
+                    <span className="rounded-full bg-gradient-to-r from-pink-500 to-orange-400 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-lg">
                       2 nuevas
                     </span>
                   </div>
@@ -104,20 +131,23 @@ export function Navbar() {
                     {MOCK_NOTIFICATIONS.map((notif) => (
                       <div 
                         key={notif.id}
-                        className={`mb-1 cursor-pointer rounded-xl p-3 transition-colors hover:bg-white/5 ${notif.isNew ? 'bg-blue-500/5' : ''}`}
+                        className={`group relative mb-1 cursor-pointer overflow-hidden rounded-xl p-3 transition-all hover:bg-white/5 ${notif.isNew ? notif.bgMuted : ''}`}
                       >
-                        <div className="flex items-start gap-3">
-                          <div className={`mt-0.5 rounded-full p-1.5 ${notif.isNew ? 'bg-blue-500/20 text-blue-400' : 'bg-white/5 text-white/40'}`}>
+                        {/* Borde izquierdo dinámico al hacer hover */}
+                        <div className={`absolute inset-y-0 left-0 w-1 bg-gradient-to-b ${notif.gradient} opacity-0 transition-opacity group-hover:opacity-100`} />
+                        
+                        <div className="flex items-start gap-3 relative z-10">
+                          <div className={`mt-0.5 rounded-full p-2 ${notif.isNew ? `bg-gradient-to-br ${notif.gradient} text-white shadow-lg` : 'bg-white/5 text-white/40'}`}>
                             {notif.isNew ? <Bell className="size-3.5" /> : <CheckCircle2 className="size-3.5" />}
                           </div>
                           <div>
-                            <p className={`text-sm font-medium ${notif.isNew ? 'text-white' : 'text-white/70'}`}>
+                            <p className={`text-sm font-bold ${notif.isNew ? 'text-white' : 'text-white/60'}`}>
                               {notif.title}
                             </p>
-                            <p className="mt-0.5 text-xs text-white/50 line-clamp-2">
+                            <p className="mt-0.5 text-xs text-white/60 line-clamp-2">
                               {notif.description}
                             </p>
-                            <span className="mt-1.5 block text-[10px] text-white/30">
+                            <span className={`mt-1.5 block text-[10px] font-medium ${notif.isNew ? notif.textDark : 'text-white/30'}`}>
                               {notif.time}
                             </span>
                           </div>
@@ -125,8 +155,8 @@ export function Navbar() {
                       </div>
                     ))}
                   </div>
-                  <div className="border-t border-white/10 p-2 text-center">
-                    <button className="w-full rounded-lg px-3 py-2 text-xs font-medium text-white/40 transition-colors hover:bg-white/5 hover:text-white/80">
+                  <div className="border-t border-white/10 p-2 text-center bg-white/[0.02]">
+                    <button className="w-full rounded-lg px-3 py-2 text-xs font-semibold text-white/50 transition-colors hover:bg-white/10 hover:text-white">
                       Marcar todas como leídas
                     </button>
                   </div>
