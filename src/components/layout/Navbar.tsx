@@ -162,9 +162,12 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="relative rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80">
+          <Link 
+            href="/explore"
+            className="relative rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80"
+          >
             <Search className="size-4" />
-          </button>
+          </Link>
           <div className="relative" ref={notificationsRef}>
             <button 
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
