@@ -33,6 +33,7 @@ export const NAV_LINKS = [
   { label: "Clips", href: "/clips" },
   { label: "Comunidad", href: "/community" },
   { label: "IA", href: "/ai" },
+  { label: "Horóscopo", href: "/horoscope" },
 ] as const
 
 export const SOCIAL_LINKS = {
