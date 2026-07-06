@@ -35,6 +35,7 @@ export const NAV_LINKS = [
   { label: "Comunidad", href: "/community" },
   { label: "IA", href: "/ai" },
   { label: "Horóscopo", href: "/horoscope" },
+  { label: "Top 10", href: "/top-musical" },
 ] as const
 
 export const SOCIAL_LINKS = {

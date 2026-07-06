@@ -49,3 +49,15 @@ export function getR2Url(key: string): string {
   if (!endpoint) return key
   return `${endpoint}/${R2_BUCKET_NAME}/${key}`
 }
+
+export async function readFromR2(key: string): Promise<string | null> {
+  const url = getR2Url(key)
+  if (!url) return null
+  try {
+    const res = await fetch(url)
+    if (!res.ok) return null
+    return await res.text()
+  } catch {
+    return null
+  }
+}
