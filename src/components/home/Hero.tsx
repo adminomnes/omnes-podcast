@@ -5,7 +5,6 @@ import { motion } from "framer-motion"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Play, TrendingUp, Sparkles, ChevronDown, Zap } from "lucide-react"
-import { SITE_NAME } from "@/lib/constants"
 import { ParallaxSection } from "@/components/effects/ParallaxSection"
 import { RevealSection } from "@/components/effects/RevealSection"
 
@@ -144,29 +143,22 @@ export function Hero() {
           </span>
         </motion.div>
 
-        <h1 className="space-y-2" style={{ perspective: "1000px" }}>
-          <div className="overflow-hidden">
-            <div className="hero-title-line text-6xl font-black tracking-tight sm:text-7xl md:text-8xl lg:text-[9rem]">
-              <span className="bg-gradient-to-r from-white via-blue-100 to-white/60 bg-clip-text text-transparent">
-                {SITE_NAME}
-              </span>
-            </div>
-          </div>
-          <div className="overflow-hidden">
-            <div className="hero-title-line text-6xl font-black tracking-tight sm:text-7xl md:text-8xl lg:text-[9rem]">
-              <span className="text-gradient">
-                PODCAST
-              </span>
-            </div>
-          </div>
-          <div className="overflow-hidden">
-            <div className="hero-title-line text-lg font-medium tracking-[0.3em] text-white/20 sm:text-xl">
-              <span className="bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-pink-400/30 bg-clip-text text-transparent">
-                ORIGINAL CONTENT
-              </span>
-            </div>
-          </div>
-        </h1>
+        <div className="flex justify-center" style={{ perspective: "1000px" }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, rotateY: -30 }}
+            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+            transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+            className="relative"
+          >
+            <div className="absolute inset-0 rounded-full bg-blue-500/10 blur-[80px]" />
+            <img
+              src="/images/logo.png"
+              alt="OMNES PODCAST"
+              className="relative h-auto w-[320px] object-contain sm:w-[400px] md:w-[500px]"
+              style={{ mixBlendMode: "screen" }}
+            />
+          </motion.div>
+        </div>
 
         <div className="overflow-hidden">
           <p ref={subtitleRef} className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed sm:text-xl">
