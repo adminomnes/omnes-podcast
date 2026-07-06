@@ -163,12 +163,13 @@ export function TopMusicalPageClient() {
         style={{ background: currentTheme.bgGradient }}
       />
 
-      <div className="relative z-10 mx-auto max-w-5xl px-6 pb-24">
+      <div className="relative z-10 mx-auto max-w-5xl px-6 pb-24 pt-6">
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           className="mb-8"
         >
-          <div className="no-scrollbar flex gap-1.5 overflow-x-auto rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1.5">
+          {/* Tab bar con glassmorphism visible */}
+          <div className="no-scrollbar flex gap-1.5 overflow-x-auto rounded-2xl border border-white/20 bg-black/60 p-2 shadow-2xl backdrop-blur-xl">
             {CHARTS.map((chart) => {
               const isSelected = activeChart === chart.key;
               const chartTheme = CHART_THEMES[chart.key];
@@ -184,10 +185,10 @@ export function TopMusicalPageClient() {
                       setLoading(false)
                     }
                   }}
-                  className={`shrink-0 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-300 border ${
+                  className={`shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 border ${
                     isSelected
                       ? chartTheme.tabActiveStyle
-                      : "text-white/40 border-transparent hover:bg-white/[0.04] hover:text-white/70"
+                      : "border-transparent text-white/75 hover:bg-white/10 hover:text-white"
                   }`}
                 >
                   <span className="mr-1.5">{chart.icon}</span>
@@ -198,11 +199,11 @@ export function TopMusicalPageClient() {
           </div>
         </motion.div>
 
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-white/30">
+        <div className="mb-6 flex items-center justify-between rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 backdrop-blur-md">
+          <div className="flex items-center gap-2 text-xs text-white/60">
             <RefreshCw className={`size-3 ${loading ? "animate-spin" : ""}`} />
             {loading ? "Cargando..." : `Actualizado ${lastUpdate}`}
-            <span className="text-white/15">·</span>
+            <span className="text-white/25">·</span>
             <Clock className="size-3" />
             {currentChart?.updatedAt
               ? new Date(currentChart.updatedAt).toLocaleDateString("es-CL", {
@@ -215,7 +216,7 @@ export function TopMusicalPageClient() {
             }
           </div>
           {currentChart && (
-            <span className="rounded-full bg-white/[0.04] px-3 py-1 text-[11px] text-white/30">
+            <span className="rounded-full border border-white/15 bg-white/[0.07] px-3 py-1 text-[11px] font-medium text-white/60">
               {currentChart.source} · Top 10
             </span>
           )}
