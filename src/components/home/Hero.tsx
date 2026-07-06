@@ -59,7 +59,7 @@ export function Hero() {
     <section ref={containerRef} className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
       {/* Hero image background */}
       <div className="absolute inset-0">
-        <img src="/images/hero.jpeg" alt="" className="size-full object-cover object-center" />
+        <video src="/images/hero.mp4" autoPlay muted loop playsInline className="size-full object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-br from-blue-950/40 via-black/40 to-purple-950/40" />
       </div>
       <div className="absolute inset-0 opacity-30" style={{
