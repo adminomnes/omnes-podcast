@@ -3,8 +3,9 @@
 import { useState, useMemo, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Sparkles, Star, Dices, Share2, Clock, ChevronRight } from "lucide-react"
-import { CrystalSphere } from "@/components/horoscope/CrystalSphere"
-import { SIGNS, SIGN_DATES } from "@/lib/horoscope/data"
+import { ZodiacWheel } from "@/components/horoscope/ZodiacWheel"
+import { GalaxyBackground } from "@/components/horoscope/GalaxyBackground"
+import { SIGNS } from "@/lib/horoscope/data"
 import {
   type Horoscope,
   generateHoroscope,
@@ -12,7 +13,7 @@ import {
   getTodayString,
 } from "@/lib/horoscope/generator"
 
-function StatItem({ label, value, icon, color }: { label: string; value: number; icon: string; color: string }) {
+function StatItem({ label, value, icon }: { label: string; value: number; icon: string }) {
   const barColor =
     value > 75 ? "from-red-500 to-orange-500" :
     value > 50 ? "from-orange-500 to-yellow-500" :
@@ -33,7 +34,7 @@ function StatItem({ label, value, icon, color }: { label: string; value: number;
           initial={{ width: 0 }}
           animate={{ width: `${value}%` }}
           transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-          className={`h-full rounded-full bg-gradient-to-r ${barColor} shadow-[0_0_10px_${color}/0.3]`}
+          className={`h-full rounded-full bg-gradient-to-r ${barColor}`}
         />
       </div>
     </div>
@@ -92,11 +93,11 @@ function PredictionCard({ horoscope, onShare }: { horoscope: Horoscope; onShare:
         </motion.p>
 
         <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-3">
-          <StatItem label="Nivel de Caos" value={horoscope.chaos} icon="🤣" color="oklch(0.7 0.3 30)" />
-          <StatItem label="Enamorarte" value={horoscope.loveProbability} icon="❤️" color="oklch(0.7 0.3 0)" />
-          <StatItem label="Gastar Plata" value={horoscope.moneyRisk} icon="💸" color="oklch(0.7 0.3 120)" />
-          <StatItem label="Necesidad de Café" value={horoscope.coffeeNeed} icon="☕" color="oklch(0.7 0.3 60)" />
-          <StatItem label="Vergüenza Pública" value={horoscope.publicShame} icon="🤡" color="oklch(0.7 0.3 330)" />
+          <StatItem label="Nivel de Caos" value={horoscope.chaos} icon="🤣" />
+          <StatItem label="Enamorarte" value={horoscope.loveProbability} icon="❤️" />
+          <StatItem label="Gastar Plata" value={horoscope.moneyRisk} icon="💸" />
+          <StatItem label="Necesidad de Café" value={horoscope.coffeeNeed} icon="☕" />
+          <StatItem label="Vergüenza Pública" value={horoscope.publicShame} icon="🤡" />
         </div>
 
         <motion.div
@@ -159,24 +160,24 @@ function InfoRow({ icon, label, value, className = "" }: { icon: string; label: 
 }
 
 const ZODIAC_EMOJIS: Record<string, string> = {
-  Aries: "♈", Tauro: "♉", Géminis: "♊", Cáncer: "♋",
-  Leo: "♌", Virgo: "♍", Libra: "♎", Escorpio: "♏",
-  Sagitario: "♐", Capricornio: "♑", Acuario: "♒", Piscis: "♓",
+  Aries: "\u2648", Tauro: "\u2649", G\u00e9minis: "\u264a", C\u00e1ncer: "\u264b",
+  Leo: "\u264c", Virgo: "\u264d", Libra: "\u264e", Escorpio: "\u264f",
+  Sagitario: "\u2650", Capricornio: "\u2651", Acuario: "\u2652", Piscis: "\u2653",
 }
 
 export function HoroscopePageClient() {
   const today = useMemo(() => getTodayString(), [])
   const [selectedSign, setSelectedSign] = useState<string | null>(null)
   const [horoscope, setHoroscope] = useState<Horoscope | null>(null)
-  const [sphereActive, setSphereActive] = useState(false)
   const [randomNonce, setRandomNonce] = useState(0)
   const [showAll, setShowAll] = useState(false)
+  const [wheelSelected, setWheelSelected] = useState<string | null>(null)
   const predictionsRef = useRef<HTMLDivElement>(null)
 
   const handleSelectSign = useCallback(
     (sign: string) => {
+      setWheelSelected(sign)
       setSelectedSign(sign)
-      setSphereActive(true)
       setTimeout(() => {
         const h = generateHoroscope(sign as any, today, 0)
         setHoroscope(h)
@@ -191,8 +192,8 @@ export function HoroscopePageClient() {
   const handleRandomDestiny = useCallback(() => {
     const newNonce = randomNonce + 1 + Math.floor(Math.random() * 10000)
     setRandomNonce(newNonce)
-    setSphereActive(true)
-    setSelectedSign("🎲")
+    setWheelSelected(null)
+    setSelectedSign("\u{1F3B2}")
     setTimeout(() => {
       const h = generateRandomDestiny(today, newNonce)
       setHoroscope(h)
@@ -208,26 +209,19 @@ export function HoroscopePageClient() {
   }, [showAll, today])
 
   return (
-    <div className="relative min-h-screen pt-24">
-      <div
-        className="pointer-events-none fixed inset-0"
-        style={{
-          background: `
-            radial-gradient(ellipse at 50% 0%, oklch(0.6 0.25 270 / 0.08) 0%, transparent 60%),
-            radial-gradient(ellipse at 80% 30%, oklch(0.5 0.2 320 / 0.05) 0%, transparent 50%),
-            radial-gradient(ellipse at 20% 50%, oklch(0.5 0.15 220 / 0.04) 0%, transparent 50%)
-          `,
-        }}
-      />
+    <div className="relative min-h-screen pt-20">
+      <GalaxyBackground />
+
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40 pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 pb-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 text-center"
+          className="mb-2 text-center"
         >
-          <span className="inline-block rounded-full bg-purple-500/10 px-4 py-1 text-xs font-medium tracking-wider text-purple-300">
-            🔮 EL HORÓSCOPO DEL CAOS™
+          <span className="inline-block rounded-full bg-purple-500/10 px-4 py-1 text-xs font-medium tracking-wider text-purple-300 backdrop-blur-sm">
+            🔮 EL HOR\u00d3SCOPO DEL CAOS\u2122
           </span>
         </motion.div>
 
@@ -235,7 +229,7 @@ export function HoroscopePageClient() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-2 text-center text-4xl font-black tracking-tight md:text-6xl"
+          className="mb-1 text-center text-4xl font-black tracking-tight md:text-6xl"
         >
           <span className="bg-gradient-to-r from-purple-400 via-blue-400 to-pink-400 bg-clip-text text-transparent">
             Tu destino
@@ -248,54 +242,26 @@ export function HoroscopePageClient() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mx-auto mb-12 mt-4 max-w-lg text-center text-sm text-white/40"
+          className="mx-auto mb-6 max-w-lg text-center text-sm text-white/40"
         >
           <Clock className="mb-0.5 mr-1 inline-block size-3.5" />
-          Cada día un nuevo destino para cada signo. Sin repeticiones. Sin piedad.
+          Cada d\u00eda un nuevo destino para cada signo. Sin repeticiones. Sin piedad.
         </motion.p>
 
-        <div className="mb-16">
-          <CrystalSphere isActive={sphereActive} signName={selectedSign && selectedSign !== "🎲" ? selectedSign : undefined} />
-        </div>
-
-        <div className="mb-8 text-center">
-          <p className="mb-4 text-sm font-medium tracking-wider text-white/30">
-            SELECCIONA TU SIGNO
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {SIGNS.map((sign, i) => {
-              const isSelected = selectedSign === sign
-              return (
-                <motion.button
-                  key={sign}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + i * 0.03 }}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleSelectSign(sign)}
-                  className={`group relative rounded-2xl border px-6 py-5 text-center transition-all duration-300 sm:px-8 ${
-                    isSelected
-                      ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_30px_oklch(0.6_0.3_280/0.15)]"
-                      : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.15] hover:bg-white/[0.05]"
-                  }`}
-                >
-                  <div className="mb-1 text-3xl">{ZODIAC_EMOJIS[sign]}</div>
-                  <div className={`text-base font-medium ${isSelected ? "text-purple-300" : "text-white/60 group-hover:text-white/80"}`}>
-                    {sign}
-                  </div>
-                  <div className="mt-1 text-[11px] text-white/20">{SIGN_DATES[sign]}</div>
-                </motion.button>
-              )
-            })}
-          </div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+          className="mb-8"
+        >
+          <ZodiacWheel onSelect={handleSelectSign} selectedSign={wheelSelected} />
+        </motion.div>
 
         <div className="mt-8 flex justify-center">
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.8 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleRandomDestiny}
@@ -325,7 +291,7 @@ export function HoroscopePageClient() {
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 1 }}
             onClick={() => setShowAll(!showAll)}
             className="inline-flex items-center gap-2 text-sm text-white/30 transition-colors hover:text-white/60"
           >
