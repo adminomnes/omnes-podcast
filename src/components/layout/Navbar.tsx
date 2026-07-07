@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect, useRef } from "react"
 import { Menu, X, Search, Bell, CheckCircle2 } from "lucide-react"
@@ -23,6 +23,9 @@ const INITIAL_NOTIFICATIONS = [
 ]
 
 export function Navbar() {
+  const pathname = usePathname()
+  if (pathname.startsWith("/admin")) return null
+
   const [isOpen, setIsOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [notifications, setNotifications] = useState<any[]>([])
