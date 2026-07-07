@@ -16,14 +16,6 @@ const CHART_THEMES: Record<ChartKey, {
   tabActiveStyle: string
   spinnerBorder: string
 }> = {
-  pedidos: {
-    primary: "#f97316", // Amber / Orange
-    bgGradient: "radial-gradient(ellipse at 50% -20%, rgba(249, 115, 22, 0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 50%, rgba(239, 68, 68, 0.04) 0%, transparent 50%)",
-    accentText: "from-orange-400 via-amber-400 to-rose-400",
-    badgeStyle: "bg-orange-500/10 text-orange-300 border-orange-500/20",
-    tabActiveStyle: "bg-orange-500/15 text-orange-300 border-orange-500/20 shadow-[0_0_20px_rgba(249,115,22,0.15)]",
-    spinnerBorder: "border-t-orange-500 border-orange-500/20"
-  },
   global: {
     primary: "#3b82f6", // Blue
     bgGradient: "radial-gradient(ellipse at 50% -20%, rgba(59, 130, 246, 0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 50%, rgba(99, 102, 241, 0.04) 0%, transparent 50%)",
@@ -83,7 +75,7 @@ const CHART_THEMES: Record<ChartKey, {
 }
 
 export function TopMusicalPageClient() {
-  const [activeChart, setActiveChart] = useState<ChartKey>("pedidos")
+  const [activeChart, setActiveChart] = useState<ChartKey>("global")
   const [charts, setCharts] = useState<ChartData[]>([])
   const [loading, setLoading] = useState(true)
   const [lastUpdate, setLastUpdate] = useState("")

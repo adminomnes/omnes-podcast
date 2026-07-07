@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
 import { Search, SlidersHorizontal, Sparkles, Clock, Headphones } from "lucide-react"
 import { GlassPanel } from "@/components/shared/GlassPanel"
@@ -23,8 +24,24 @@ const MOCK_CONTENT = [
 ]
 
 export function ExplorePageClient() {
-  const [query, setQuery] = useState("")
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-24 text-center text-white/50">Cargando búsqueda...</div>}>
+      <ExplorePageContent />
+    </Suspense>
+  )
+}
+
+function ExplorePageContent() {
+  const searchParams = useSearchParams()
+  const initialQuery = searchParams.get("q") || ""
+  const [query, setQuery] = useState(initialQuery)
   const [activeFilter, setActiveFilter] = useState("todos")
+
+  useEffect(() => {
+    if (initialQuery) {
+      setQuery(initialQuery)
+    }
+  }, [initialQuery])
 
   return (
     <div className="min-h-screen pt-24">

@@ -17,13 +17,13 @@ export interface TrackData {
   previousPosition: number | null
 }
 
-export type ChartKey = "global" | "chile" | "pop" | "urbano" | "rock" | "electronica" | "latina" | "pedidos"
+export type ChartKey = "global" | "chile" | "pop" | "urbano" | "rock" | "electronica" | "latina"
 
 export interface ChartConfig {
   key: ChartKey
   label: string
   icon: string
-  playlistId: string
+  provider: string
 }
 
 export interface ChartData {

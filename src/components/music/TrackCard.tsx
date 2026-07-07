@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ExternalLink, PlayCircle, TrendingUp, TrendingDown, Minus, Sparkles } from "lucide-react"
+import { Headphones, PlayCircle, TrendingUp, TrendingDown, Minus, Sparkles } from "lucide-react"
 import type { TrackData, Variation } from "@/lib/music/types"
 import { AnimatedCounter } from "./AnimatedCounter"
 
@@ -98,10 +98,10 @@ export function TrackCard({ track, index, themeColor }: { track: TrackData; inde
             href={track.spotifyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-full bg-[#1DB954]/20 px-3 py-1.5 text-[11px] font-medium text-[#1DB954] transition-all hover:bg-[#1DB954]/30"
+            className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/15 px-3 py-1.5 text-[11px] font-medium text-blue-400 transition-all hover:bg-blue-500/25"
           >
-            <ExternalLink className="size-3" />
-            Spotify
+            <Headphones className="size-3" />
+            Escuchar
           </a>
           <a
             href={track.youtubeUrl}

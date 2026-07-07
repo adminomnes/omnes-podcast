@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect, useRef } from "react"
 import { Menu, X, Search, Bell, CheckCircle2 } from "lucide-react"
@@ -26,7 +27,10 @@ export function Navbar() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [notifications, setNotifications] = useState<any[]>([])
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
   const notificationsRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   // Cargar notificaciones guardadas en localStorage al iniciar
   useEffect(() => {
@@ -109,6 +113,18 @@ export function Navbar() {
     setNotifications(prev => prev.map(n => ({ ...n, isNew: false })))
   }
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/explore?q=${encodeURIComponent(searchQuery.trim())}`)
+      setIsSearchOpen(false)
+      setSearchQuery("")
+    } else {
+      router.push("/explore")
+      setIsSearchOpen(false)
+    }
+  }
+
   // Manejo del scroll
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 60)
@@ -162,12 +178,40 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link 
-            href="/explore"
-            className="relative rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80"
-          >
-            <Search className="size-4" />
-          </Link>
+          <div className="relative flex items-center h-10">
+            <AnimatePresence initial={false}>
+              {isSearchOpen ? (
+                <motion.form 
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 220, opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onSubmit={handleSearchSubmit}
+                  className="flex items-center overflow-hidden"
+                >
+                  <input
+                    type="text"
+                    autoFocus
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar episodios, podcasts..."
+                    className="w-full rounded-full border border-white/20 bg-white/10 py-2 pl-4 pr-10 text-sm text-white placeholder-white/40 outline-none backdrop-blur-md transition-all focus:border-blue-500/50 focus:bg-white/15"
+                  />
+                  <button type="button" onClick={() => setIsSearchOpen(false)} className="absolute right-2 p-1 text-white/40 hover:text-white/80 transition-colors">
+                    <X className="size-4" />
+                  </button>
+                </motion.form>
+              ) : (
+                <button 
+                  onClick={() => setIsSearchOpen(true)}
+                  className="relative rounded-full p-2.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white/80"
+                >
+                  <Search className="size-4" />
+                </button>
+              )}
+            </AnimatePresence>
+          </div>
+
           <div className="relative" ref={notificationsRef}>
             <button 
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}

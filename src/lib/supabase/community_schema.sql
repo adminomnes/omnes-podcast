@@ -1,48 +1,19 @@
 -- SALA DEL CAOS - SUPABASE SCHEMA
 -- Run this in your Supabase SQL Editor
 
--- 1. Create profiles table (extends auth.users)
-CREATE TABLE public.profiles (
-  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-  username TEXT UNIQUE NOT NULL,
-  display_name TEXT,
-  avatar_url TEXT,
-  bio TEXT,
-  status TEXT DEFAULT 'Disponible',
-  favorite_podcast TEXT,
-  favorite_song TEXT,
-  interests TEXT[] DEFAULT '{}',
-  xp INTEGER DEFAULT 0,
-  level INTEGER DEFAULT 1,
-  badges TEXT[] DEFAULT '{}',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
--- Enable RLS for profiles
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Public profiles are viewable by everyone." 
-  ON public.profiles FOR SELECT USING (true);
-
-CREATE POLICY "Users can insert their own profile." 
-  ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
-
-CREATE POLICY "Users can update own profile." 
-  ON public.profiles FOR UPDATE USING (auth.uid() = id);
-
--- Trigger to handle updated_at on profiles
-CREATE OR REPLACE FUNCTION handle_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = now();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER on_profiles_updated
-  BEFORE UPDATE ON public.profiles
-  FOR EACH ROW EXECUTE PROCEDURE handle_updated_at();
+-- 1. Actualizar tabla profiles existente (agregando columnas de comunidad)
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS display_name TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS bio TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Disponible';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS favorite_podcast TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS favorite_song TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS interests TEXT[] DEFAULT '{}';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS xp INTEGER DEFAULT 0;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS level INTEGER DEFAULT 1;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS badges TEXT[] DEFAULT '{}';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now());
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now());
 
 -- 2. Create rooms table
 CREATE TYPE room_type AS ENUM ('permanent', 'temporary', 'episode', 'live');
