@@ -112,6 +112,12 @@ export function Footer() {
                   <ArrowUpRight className="size-3 opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               ))}
+              <Link
+                href="/admin/login"
+                className="group flex items-center gap-1 text-sm text-white/20 transition-colors hover:text-white/40"
+              >
+                Admin
+              </Link>
             </div>
           </div>
         </div>
