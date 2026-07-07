@@ -178,6 +178,12 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
+          <Link
+            href="/admin/dashboard"
+            className="hidden rounded-full px-3 py-1.5 text-xs font-medium text-white/30 transition-colors hover:bg-white/5 hover:text-white/60 md:block"
+          >
+            Admin
+          </Link>
           <div className="relative flex items-center h-10">
             <AnimatePresence initial={false}>
               {isSearchOpen ? (
@@ -312,6 +318,13 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/admin/dashboard"
+              onClick={() => setIsOpen(false)}
+              className="block rounded-xl px-4 py-3 text-sm text-white/30 transition-all hover:bg-white/5 hover:text-white/50"
+            >
+              Admin
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
